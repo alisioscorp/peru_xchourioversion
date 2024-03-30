@@ -110,14 +110,20 @@ def render_heatmap_latlon():
     st_folium(mapObj, width=1050, height=450, use_container_width=True)#, width=800, height=450
     
     # Mostrar la barra de colores con valores multiplicados por 100
+    # Los valores extremos deben ponerse en codigo HTML al igual que si se quiere agregar un espacio
+    # Ejemplo '≤'(&#8804;) ' '(&nbsp;), entonces es camobinacion '≤ ' se escribe '&#8804;&nbsp;'
     bar_range=dic.vars['map_color_bar'][1]
     st.markdown(f'<div style="{css_gradient}; position: relative; width: 100%;">' +
-           ''.join([f'<span style="position: absolute; left: {stop[0] * dic.vars["map_factor"][1] }%; top: 100%; transform: translateX(-50%);">{int(stop[0] * dic.vars["map_factor"][1] )}%</span>' for stop in color_scale_heatmap 
-                    if stop[0] == dic.color_bar_adjust(0.0,bar_range[0],bar_range[1]) 
-                    or stop[0] == dic.color_bar_adjust(0.25,bar_range[0],bar_range[1]) 
-                    or stop[0] == dic.color_bar_adjust(0.50,bar_range[0],bar_range[1]) 
-                    or stop[0] == dic.color_bar_adjust(0.75,bar_range[0],bar_range[1]) 
-                    or stop[0] == dic.color_bar_adjust(1,bar_range[0],bar_range[1])
+           ''.join([
+                    f'<span style="position: absolute; left: {stop[0]}%; top: 100%; transform: translateX(-50%);">'
+                    f'{ "&#8804;&nbsp;5" if stop[0] <= 5 else ("&#8805;&nbsp;95" if stop[0] >= 95 else int(stop[0] * dic.vars["map_factor"][1]) )}%'
+                        '</span>'
+                    for stop in color_scale_heatmap
+                        if stop[0] == dic.color_bar_adjust(0.0,bar_range[0],bar_range[1]) 
+                        or stop[0] == dic.color_bar_adjust(0.25,bar_range[0],bar_range[1]) 
+                        or stop[0] == dic.color_bar_adjust(0.50,bar_range[0],bar_range[1]) 
+                        or stop[0] == dic.color_bar_adjust(0.75,bar_range[0],bar_range[1]) 
+                        or stop[0] == dic.color_bar_adjust(1,bar_range[0],bar_range[1])
                     ]) +
            '</div>', unsafe_allow_html=True)
     
