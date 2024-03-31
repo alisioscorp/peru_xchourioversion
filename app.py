@@ -140,7 +140,7 @@ def main():
         #Se ubica el archivo de carga
         file_name=dic.vars["file_proc"][1][8:].replace('.nc', '_'+dic.vars["map_source"][1]+'.csv')
         file=os.path.join('data',place_activo,date.strftime('%Y%m%d')+file_name)
-        #Se activa semaforo de exclusion de evento para la serie
+        #Se activa semaforo de exclusion de evento para la serie (* importante para controlar los eventos de clic)
         dic.serie_sesion('calendar',date.strftime('%d-%b-%Y'))
         #Se le avisa a los componentes de mapa y gauge qué deben cargar 
         cargar_map_datos_csv(file,True)

@@ -18,14 +18,14 @@ activos={
 
 serie={
     "label" : ['Precipitación','Probabilidad_Deslaves'], # Label superior de la series de datos
-    "color": ['#556FC6','#91CC74'], # Colores en que se muestran las series de datos 
+    "color": ['#556FC6','#91CC74'], # Colores en que se muestran las series de datos usar siempre codigos hex puede ubicar colores en (https://htmlcolorcodes.com/es/tabla-de-colores/) 
     "Y_axis_label":['Precipitación','Probabilidad de deslaves'], #Label en los ejes 
     "units":['mm','%'], # unidades de cada serie
     "type":['bar','bar'], # Puede ser line, bar, area
     "source":['grid','shape'],
     "shade":50, # Corresponde a la tonalidad con la que se muestran los valores minimos en una barra (50% mas claro que el color original)
     "file":'serie.csv', #Solo se define un archivo que va a contener los datos de las serie de todas las variables
-    "interval":[[0,300],[0,100]], #Ajustar los intervalos minimo y máximo de la serie
+    "interval":[[0,10],[0,100]], #Ajustar los intervalos minimo y máximo de la serie
 
 }
 vars={
@@ -274,8 +274,8 @@ def serie_sesion(control='', date_select='',readfrom3=False):
     global calendar_date
     global serie_date
     global state_event
-    print('pepe es pepa')
-    print(date_select)
+    #print('pepe es pepa')
+    #print(date_select)
     if control =='calendar' and calendar_date != date_select:
         calendar_date = date_select
         date_activate = date_select
