@@ -13,7 +13,7 @@ import os
 import streamlit.components.v1 as components
 
 #Setear la serie a español
-locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
+#locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
 #control de evento de la serie
 in_control=False
 # Obtener la fecha actual
