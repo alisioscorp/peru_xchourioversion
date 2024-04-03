@@ -60,12 +60,30 @@ def render_series_arealine():
             data_markpoint.append({"coord": [indice, valor],"value":str(valor)+'%',"itemStyle": {"color": dic.gauge['color'][-2]}})
         elif valor >= int(dic.gauge['values'][-2]*100) and valor <= int(dic.gauge['values'][-1]*100):
             data_markpoint.append({"coord": [indice, valor], "value":str(valor)+'%',"itemStyle": {"color": dic.gauge['color'][-1]}})
-        #else:
-        #    print(str('NO entra'))
-        #    data_markpoint.append({"coord": [indice, valor], "value": str(valor)+'%', "itemStyle": {"color": "gray"}})
+
 
     start_index = max(0, len(fechas_dias) - 12)
     end_index = len(fechas_dias)
+    #Se crean los labels del tooltip, se debe hacer en Javascrip
+    formater=JsCode(
+        "function (params) {"
+            +  "const date = ['"+"','".join(map(str, fechas_dias))+"'];"
+            +  "const serie1_min = ["+",".join(map(str, datos_serie1_min))+"];"
+            +  "const serie2_min = ["+",".join(map(str, datos_serie2_min))+"];"
+            +  "const posicion = date.indexOf(params[0].name);"
+            +  "var tooltipHtml = params[0].name + '<br/>';"
+            +  "params.forEach(function(param) {"
+            +  "  if (param.seriesName === '"+dic.serie['label'][0]+"') {"
+            +  "   tooltipHtml += '<span style=\"color:#0080FE; font-size: 16px\">&#x25cf;</span> ' + param.seriesName + ' max: <strong>' + param.value + ' mm</strong> <br/>';"
+            +  "   tooltipHtml += '<span>&nbsp;&nbsp;&nbsp;</span> ' + param.seriesName + ' min: <strong>' + serie1_min[posicion] + ' mm</strong> <br/>';"
+            +  "  } else if (param.seriesName === '"+dic.serie['label'][1]+"') {"
+            +  "   tooltipHtml += '<span style=\"color:#00D100;font-size: 16px\">&#x25cf;</span> ' + param.seriesName + ' max: <strong>' + param.value + '%</strong> <br/>';"
+            +  "   tooltipHtml += '<span>&nbsp;&nbsp;&nbsp;</span> ' + param.seriesName + ' min: <strong>' + serie2_min[posicion] + '%</strong> <br/>';"
+            +  "  }"
+            +  "});"
+            +  "return tooltipHtml;"
+            +"}"
+    ).js_code
 
     option = {'calculable': True,
             'legend': {'data': ['Precipitación', 'Probabilidad_Deslaves'], 'textStyle': {'color': color_texto}, 'top': 'top', 'left': 'center'},
@@ -114,9 +132,7 @@ def render_series_arealine():
                          'saveAsImage': {'show': True}},
                         'show': True},
             'tooltip': {'trigger': 'axis',
-                         "formatter":'{b} <br/> '+
-                            '<span style="color:#0080FE; font-size: 16px">&#x25cf;</span> {a0}: <strong>{c0} mm</strong> <br/>'+ 
-                            '<span style="color:#00D100;font-size: 16px">&#x25cf;</span>  {a1}: <strong>{c1}%</strong>'
+                         "formatter":formater
              },
             "dataZoom": [{
                             "type": "slider",
@@ -140,54 +156,11 @@ def render_series_arealine():
 
             'backgroundColor': "#FFFFFF" if tema_actual == "light" else "#1E1E1E",  # Fondo blanco para el tema claro y negro para el oscuro
     }
-    #Validar todas las opciones de barras (doble barra, una barra)
-    if  all(type == 'bar' for type in dic.serie['type']):
-        option['xAxis'].append({
-        'data': fechas_dias,
-        'type': 'category',
-        'axisLabel': {'show': False}
-        })
-        for i in range(len(dic.serie['type'])):
-            if i==0:
-                data=datos_serie1_min
-            elif i==1:
-                data=datos_serie2_min
-            option['series'].append({
-                'data':data,
-                #'name': dic.serie['label'][0],
-                "yAxisIndex": i,
-                "xAxisIndex":1,
-                'color': dic.lighten_color(dic.serie['color'][i],dic.serie['shade']),
-                'type': 'bar',
-            })
-
-    elif 'bar' in dic.serie['type']:
-        bar_index = dic.serie['type'].index('bar')
-        if bar_index==0:
-            data=datos_serie1_min
-        elif bar_index==1:
-            data=datos_serie2_min
-
-        option['xAxis'].append({
-        'data': fechas_dias,
-        'type': 'category',
-        'axisLabel': {'show': False}
-        })
-        option['series'].append({
-            'data':data,
-            #'name': dic.serie['label'][0],
-            "yAxisIndex": bar_index,
-            "xAxisIndex":1,
-            'color': dic.lighten_color(dic.serie['color'][bar_index],dic.serie['shade']),
-            'type': 'bar',
-            })
-
 
 
     events = {
             "click":"function(params) { return [params.type, params.name, params.value] }"
         }
-    tooltip_config = option['tooltip']
     bar_events = st_echarts(option, events=events, key="serie")
     state_event=dic.serie_sesion(readfrom3=True)
     
@@ -203,13 +176,7 @@ def render_series_arealine():
             dic.fecha_usr(bar_events[1])
         dic.serie_sesion('serie',bar_events[1])
  
-    #formatter = tooltip_config.get('formatter')
 
-    # Verificar si hay un formato personalizado definido
-    #if formatter:
-    #    print("Contenido del tooltip:", formatter)
-    #else:
-    #    print("No hay formato personalizado definido para el tooltip.")
 
 
 ST_SERIES_COMPONENTS = {

@@ -18,33 +18,40 @@ activos={
 
 serie={
     "label" : ['Precipitación','Probabilidad_Deslaves'], # Label superior de la series de datos
-    "color": ['#556FC6','#91CC74'], # Colores en que se muestran las series de datos 
+    "color": ['#556FC6','#91CC74'], # Colores en que se muestran las series de datos usar siempre codigos hex puede ubicar colores en (https://htmlcolorcodes.com/es/tabla-de-colores/) 
     "Y_axis_label":['Precipitación','Probabilidad de deslaves'], #Label en los ejes 
     "units":['mm','%'], # unidades de cada serie
     "type":['bar','bar'], # Puede ser line, bar, area
     "source":['grid','shape'],
     "shade":50, # Corresponde a la tonalidad con la que se muestran los valores minimos en una barra (50% mas claro que el color original)
     "file":'serie.csv', #Solo se define un archivo que va a contener los datos de las serie de todas las variables
-    "interval":[[0,300],[0,100]], #Ajustar los intervalos minimo y máximo de la serie
+    "interval":[[0,10],[0,100]], #Ajustar los intervalos minimo y máximo de la serie
 
 }
 vars={
     "label" : ['Precipitación','Probabilidad_Deslaves'],
     # Las siguientes lineas solo son vinculante para la creacion de archivos (el procesado)
     "name_proc":['precip(mm)','deslaves(%)'], # nombre con el que se guardaran los valores procesados para archivos visualizados en el mapa
-    "file_proc":['20240229_Peru_rain.nc','20240229_Peru_lndslides.nc'], # nombre de archivos-> coloque el nombre completo de un archivo, 
+    "file_proc":['20240307_Peru_rain.nc','20240307_Peru_lndslides.nc'], # nombre de archivos-> coloque el nombre completo de un archivo, 
                                                                           # recuerde debe comenzar con fecha en formato YYYYMMDD luego un '_'
                                                                           # y alfinal el nombre que desee colocarle seguido de la extención 
                                                                           # por ejemplo 19850115_pepe.nc
     "var_proc":['daily_rain','p_landslide'], #variables dentro de archivo nc
+    "var_proc_latlon":['lat','lon'], #nombre de variable de longitud y latitud dentro de archivo nc
     "units":['mm','%'], #Unidades de los datos
     "var_is_layer":[True,False],  #Indicar cual es la variable de grid layer 
     "min_proc":['precip_min','deslaves_min'],#nombre de va con los que se guardan los valores mínimos
     "max_proc":['precip_max','deslaves_max'], #nombre de va con los que se guardan los valores máximos
     "date_proc":['fecha'], # En este caso solo se define una vez porque es un campo común para todas las variables
     "map_factor":[1,1],
-    "map_color_bar":[[0,300],[0,100]],
-    "map_source":['shape','shape'],
+    "map_label_layer":['precipitación','Ferrovia'], #Label que saldrá en la lista layer del mapa folium
+    "map_layer_activate":[False,True], #Activar por defecto si se muestra el layer la primera vez (valore True o False) 
+                                       # Se recomienda al menos dejar un layer en True
+    "map_layer_opacity":[0.8,0.7],  #Transparencia del layer en el mapa (valores de 0 a 1)
+    "map_color_bar":[[0,10],[0,100]], #Rango de la barra de colores 
+    "map_title_color_bar":['Precipitación','Probabilidad'], #Titulo de la barra de colores
+    "map_source":['shape','shape'], #Esto solo afecta la linea, shape significa que hay una archivo con ese sufijo donde estan los datos 
+                                    # procesados por el shape en este caso de Peru para construir la linea ferrea 
     
 }
 
@@ -134,6 +141,7 @@ css='''
         '''
 
 import numpy as np
+from branca.colormap import linear
 
 
 
@@ -198,6 +206,18 @@ def hex_to_rgba(hex_color, alpha):
     a = alpha / 255
     # Retornar la cadena en formato rgba
     return f"rgba({r}, {g}, {b}, {a})"
+
+def rgba_to_hex(rgba_color):
+    # Convertir los valores RGBA en el rango de 0 a 255
+    r = int(rgba_color[0] * 255)
+    g = int(rgba_color[1] * 255)
+    b = int(rgba_color[2] * 255)
+    # Convertir el valor de alfa en el rango de 0 a 255
+    a = int(rgba_color[3] * 255)
+    # Formatear los valores en formato hexadecimal
+    hex_color = "#{:02x}{:02x}{:02x}{:02x}".format(r, g, b, a)
+    # Retornar el valor hexadecimal
+    return hex_color
 
 def lighten_color(hex_color, factor):
     # Eliminar el carácter '#' si está presente
@@ -265,6 +285,38 @@ def get_bar_color(factor=15,bar_range=vars['map_color_bar'][1]):
 def obtener_mes_en_espanol(mes_ingles):
     return meses_espanol.get(mes_ingles, mes_ingles)
 
+def get_color_extra_layer(color,min,max):
+    if color=='BrBG':
+        colormap = linear.BrBG_11.scale(
+                    min, max
+                    )
+    else:
+        colormap = linear.YlGn_09.scale(
+                    min, max
+                    )
+    return colormap
+
+layer_index = None
+def get_layers():
+    global layer_index
+    layers = sum(valor == True for valor in vars["var_is_layer"])
+    if layers == 1:
+        layer_index =[i for i, valor in enumerate(vars["var_is_layer"]) if valor][0]
+    return layer_index
+
+def colorbar_to_css(color_scale,index,units):
+    css_gradient = "background: linear-gradient(to right, "
+    for stop in color_scale:
+        css_gradient += f"{stop[1]} {stop[0] * vars['map_factor'][index] }%, "
+    css_gradient = css_gradient[:-2] + "); width: 500px; height: 30px; margin-top: 0px; margin-bottom: 0px; margin-left: auto; margin-right: auto;"
+    # Agregar valores debajo de la barra de colores
+    css_gradient += "text-align: center; margin-top: 10px;"
+    css_gradient += "position: relative;"
+    css_gradient += "font-size: 14px;"
+    css_gradient += "display: flex;"
+    css_gradient += "justify-content: space-between;"
+    return css_gradient
+
 date_activate =None
 calendar_date=None
 serie_date=None
@@ -274,8 +326,8 @@ def serie_sesion(control='', date_select='',readfrom3=False):
     global calendar_date
     global serie_date
     global state_event
-    print('pepe es pepa')
-    print(date_select)
+    #print('pepe es pepa')
+    #print(date_select)
     if control =='calendar' and calendar_date != date_select:
         calendar_date = date_select
         date_activate = date_select
