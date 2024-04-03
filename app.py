@@ -5,7 +5,7 @@ import streamlit as st
 #Extras
 import pandas as pd
 import numpy as np
-import snowflake.connector
+#import snowflake.connector
 import streamlit_option_menu
 from streamlit_option_menu import option_menu
 
@@ -20,9 +20,9 @@ from loaddata.files import cargar_map_datos_layer_nc
 import os
 import base64
 from pathlib import Path
-import locale
+#import locale
 
-locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
+#locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
 import datetime
 
 
