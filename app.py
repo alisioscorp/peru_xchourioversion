@@ -15,6 +15,8 @@ from dashboards.gauge import ST_GAUGES_COMPONENTS
 import loaddata.dictionary as dic
 from loaddata.files import cargar_serie_datos_csv
 from loaddata.files import cargar_map_datos_csv
+from loaddata.files import cargar_map_datos_layer_csv
+from loaddata.files import cargar_map_datos_layer_nc
 import os
 import base64
 from pathlib import Path
@@ -145,6 +147,16 @@ def main():
         #Se le avisa a los componentes de mapa y gauge qué deben cargar 
         cargar_map_datos_csv(file,True)
         dic.fecha_usr(date.strftime('%d-%b-%Y'))
+        #Cargar NC de layer
+        file_name=dic.vars["file_proc"][0][8:]
+        file=os.path.join('data',place_activo,date.strftime('%Y%m%d')+file_name)
+        layer = dic.get_layers()
+        if layer is not None:
+            var = dic.vars["var_proc"][layer]
+            json_file=os.path.join('data',place_activo,dic.vars['file_proc'][layer].replace('.nc','.geojson'))
+            cargar_map_datos_layer_csv(file.replace('.nc','.csv'),reload=True,var=var, json_file=json_file)
+            cargar_map_datos_layer_nc(file,reload=True,var=var)
+            del var 
 
     #Dsitribución del canvas
     #st.title("Deslaves")
