@@ -3,6 +3,9 @@ activos={
         'name':['Ferrovia 1'],#'Ferrovia 2'], #Nombre de los activos
         'var':['FerVia1'],#'FerVia2'], #Nombre de variables internas asociada con el activo (Nunca usar espacios en este campo)
         'shape':['Callao_LaOroya.shp'],#''], #Si usa shape agruege el nombre del archivo , sino solo use ''
+        'shape_order':['Peru'],#''], #Las opciones en este item son 'Peru' o 'None' , 
+                                     #El caso 'Peru' es porque la líneas está desordenada, entonces comienza en un punto y luego salta al otro extremo
+                                     #   y siguen los puntos hasta el punto incial de donde saltó. 
         'home_path':['Peru_Varios'],#'Peru_Varios'], #Directorios donde están los archivos a procesar (ahí debe estar los nc y shapes - defina un directorio por activo), 
         #'out_path':['pepe1','pepo1'], #Directorio donde se guardan los datos procesados
         "source":['shape'],

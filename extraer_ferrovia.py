@@ -4,7 +4,7 @@ import pandas as pd
 import os
 import numpy as np
 from scipy.spatial import cKDTree
-from shapely.geometry import LineString, Point
+from shapely.geometry import LineString, Point, Polygon, MultiPolygon
 from shapely.geometry import MultiPoint
 from shapely.ops import split
 import loaddata.dictionary as dic
@@ -49,13 +49,25 @@ def calculate_distance(point1, point2):
 def geometrias_to_puntos(gdf):
     # Convertir geometrías de LineString a puntos
     points = []
-    #Comentado pero funciona
     for line in gdf.geometry:
         if isinstance(line, LineString):
+            print("\033[40m\033[33mEste Shape es una línea ......... Se tratará tal como viene\033[0m")
             points.extend(list(line.coords))
+        elif isinstance(line, Polygon):  
+            print("\033[40m\033[33mEste Shape es un Polígono ......... Se debe extraer la linea de borde \033[0m")
+            # Extraer los puntos del POLYGON y crear un LINESTRING como una linea simple (basicamente el borde)
+            line = LineString(line.exterior.coords)
+            points.extend(list(line.coords))
+        elif isinstance(line,MultiPolygon):
+            print("\033[40m\033[31mEste Shape es un Multi-Polígono ......... Se debe extraer la línea de borde de cada polígono \033[0m")
+            print("\033[40m\033[31m|_______Tener un Multi-Polígono no es recomendable porque puede generar líneas erroneas en el mapa  \033[0m")
+            print("\033[40m\033[31m        porque el line del mapa streamlist no está diseñado para multipóligonos en simultaneo  \033[0m")
+            for polygon in line:
+                # Extender la lista de puntos con las coordenadas del contorno de cada POLYGON
+                points.extend(list(polygon.exterior.coords))
         else:
-            for linestring in line:
-                points.extend(list(linestring.coords))
+            print("\033[40m\033[31m  El tipo "+{type(line).__name__}+" del shape no está contemplado  en este sistema \033[0m")
+            sys.exit()
 
     # Crear un nuevo GeoDataFrame con los puntos
     gdf_points = gpd.GeoDataFrame(geometry=[Point(x, y) for x, y in points], crs=gdf.crs)
