@@ -31,6 +31,31 @@ serie={
     "interval":[[0,10],[0,100]], #Ajustar los intervalos minimo y máximo de la serie
 
 }
+
+from datetime import datetime #Es Necesario para automatizar la lectura del año actual
+scatter_bar={
+         "data_set_name" : [str(datetime.now().strftime('%Y')),'2020','2017','2016','Normal','<40%','40-59%','60-89%','>90%'], #Nombre las categorias de los datos a mostrar (En este caso la sección 'Años' en el scatter) 
+                                                                                                                               # Deben existir todos los labels correspondientes a cada archivo no importa si no los va a plotear 
+                                                                                                                               # por defecto, los labels que se plotean por defecto se asignan al grupo_1 (explicado más abajo)
+    "data_set_name_file" : [str(datetime.now().strftime('%Y'))+'.nc','2020.nc','2017.nc','2016.nc','Normal.nc','<40%.nc','40-59%.nc','60-89%.nc','>90%.nc'], # Nombre de los archivos (deben ser formato .nc)
+          "data_set_var" : ['prcp','prcp','prcp','prcp','prcpSmooth','prcp','prcp','prcp','prcp'], #Nombre de la variable que contien los datos en cada archivo
+         "data_set_time" : ['T','T','T','T','T','T','T','T','T'], #Nombre del grid de Tiempo (fechas) en cada archivo 
+"data_set_type_calendar" : ['julian_day','julian_day','julian_day','julian_day','days since 1960-01-01','julian_day','julian_day','julian_day','julian_day'], # Formato de fecha en el grid T (solo permitido julian_day y days since 1960-01-01)
+        "data_set_color" : ["#e7ba52", "#a7a7a7", "#aec7e8", "#1f77b4","#9467BD","#E500B7","#E500B7","#E500B7","#E500B7"], #Colores con que se plotearan los datos (aunque no todos los labels estén asociados al grupo_1 -ploteo por defecto-, 
+                                                                                                                           # debe agregar la misma cantidad de colores que cantidad de labels definidos arriba)
+            "is_scatter" : [True,True,True,True,True,False,False,False,False], # El label (categoría) se mostrará en el scatter?
+                "is_bar" : [True,True,True,True,True,False,False,False,False], # El label (categoría) se mostrará en la barra?
+    "group_labels_names" : ['Años','% Max deslaves'], # Cómo se llamarán los grupos de categorías mostradas en el scatter? el primero es el valor de las categorías (en este caso 'Años' que muestra los valores de precipitación)
+                                                      #  el segundo valor es el grupo de valores >X , <X debajo de 'Años' que en este caso están asociados a los % de deslaves , no está permitido el uso de caracteres de enter    
+            "in_group_1" : [True,True,True,True,True,False,False,False,False], # in_group_1 significa que se ploteará esta cetegoría por defecto
+        "scatter_y_title": "Precipitación", # Título Y del Scatter
+        "scatter_y_units": "mm", # Unidades Y del Scatter
+        "scatter_y_range":[0,50],# Rango de valores en eje Y
+            "bar_y_title": "Años",# Título Y del Bar
+            "bar_x_title": "Precipitación total", # Título X del Bar
+            "bar_x_units": "mm", # Unidades X del Bar
+}
+
 vars={
     "label" : ['Precipitación','Probabilidad_Deslaves'],
     # Las siguientes lineas solo son vinculante para la creacion de archivos (el procesado)

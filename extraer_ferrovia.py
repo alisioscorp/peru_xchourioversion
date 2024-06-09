@@ -95,7 +95,7 @@ def get_coords_shape(nc_files,nc_dir,out_dir,x_destino,y_destino,var,name,min_na
     fecha=[]
     for nc_file in nc_files:
         # Verificar si ya existe un archivo CSV correspondiente al archivo NetCDF actual
-        csv_filename = os.path.splitext(nc_file)[0] + '_shape.csv'
+        csv_filename = os.path.splitext(nc_file)[0] + '_shape.csv' #'_shape.csv'
         if csv_filename in os.listdir(nc_dir):
             print(f"El archivo CSV correspondiente a {nc_file} ya existe. Saltando al siguiente archivo.")
             continue
