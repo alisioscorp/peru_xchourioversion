@@ -231,7 +231,7 @@ def render_heatmap_latlon():
 
 
 ST_MAPS_COMPONENTS = {
-    "Heatmap: Ferrovía": (
+    "Heatmap: Ferrovia": (
         render_heatmap_latlon,
         "https://medium.com/datasciencearth/map-visualization-with-folium-d1403771717",
         #https://discuss.streamlit.io/t/streamlit-folium-update-more-dynamic-maps/35149/3

@@ -164,27 +164,34 @@ def main():
     st.markdown(banner(dic.alisios['banner_top'],'banner',dic.alisios['url']), unsafe_allow_html=True)
     #Las Columnnas y sus proporciones
     c3, c1= st.columns([2, 4],gap="large")
-    c4, c2= st.columns([2, 4],gap="large")
 
     #Los container
     with st.container():
         c1.write("") #c1
-        c2.write("") #c2
 
     with st.container():
         c3.write("") #c3
-        c4.write("c4") #c4
 
+    st.container()
+    st.markdown(" <br> <br> ", unsafe_allow_html=True)
     #Siempre cargar la serie primero porque me permite controlar el resto de componentes
-    with c2:
+    with st.container():
         dasboardC2, url = (
             ST_COMPONENT['Series: Area & Line']
         )
         dasboardC2()
 
+    #st.container()
+    #st.markdown(" <br> <br> ", unsafe_allow_html=True)
+    #with st.container():
+    #    dasboardC4, url = (
+    #        ST_SCATTERS_COMPONENTS['Scatters & Bars']
+    #    )
+    #    dasboardC4()
+
     with c1:
         dasboardC1, url = (
-            ST_COMPONENT[selected_map]
+            ST_COMPONENT["Heatmap: Ferrovia"]
         )
         dasboardC1()
 
@@ -214,12 +221,12 @@ if __name__ == "__main__":
     main()
     with st.sidebar:
         st.markdown("---")
-        st.markdown(
-            '<h6>Copyright © 2024,  <a href="'+dic.alisios['url']+'">ALISIOS CORP</a></h6>',
-            unsafe_allow_html=True,
-        )
-        st.markdown(
-            '<h6>Made in &nbsp<img src="https://streamlit.io/images/brand/streamlit-mark-color.png" alt="Streamlit logo" height="16">&nbsp by <a href="info@alisioscorporation.com">@xchourio  &  @alicios_corp</a></h6>',
-            unsafe_allow_html=True,
-        )
+        #st.markdown(
+        #    '<h6>Made in &nbsp<img src="https://streamlit.io/images/brand/streamlit-mark-color.png" alt="Streamlit logo" height="16">&nbsp by <a href="https://twitter.com/andfanilo">@andfanilo</a></h6>',
+        #    unsafe_allow_html=True,
+        #)
+        #st.markdown(
+        #    '<div style="margin-top: 0.75em;"><a href="https://www.buymeacoffee.com/andfanilo" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a></div>',
+        #    unsafe_allow_html=True,
+        #)
         
