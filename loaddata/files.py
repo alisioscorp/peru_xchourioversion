@@ -7,13 +7,82 @@ import numpy as np
 import geopandas as gpd
 import streamlit as st
 import xarray as xr
+import random
+from datetime import datetime
 
 datos_csv_map_cargado = None
 datos_csv_serie_cargado = None
 datos_nc_map_cargado = None
 datos_nc_map_heat_cargado = None
+datos_nc_scatterbar_cargado = None
 archivo_csv = "data/pepe.csv"
 archivo_nc = "data/pepe.nc"
+
+def julian_to_gregorian(jd):
+    # Calculamos los valores A, B y C según la fórmula de conversión
+    A = jd + 32044
+    B = int((4 * A + 3) / 146097)
+    C = A - int((146097 * B) / 4)
+
+    # Calculamos los valores D, E y F según la fórmula de conversión
+    D = int((4 * C + 3) / 1461)
+    E = C - int((1461 * D) / 4)
+    F = int((5 * E + 2) / 153)
+
+    # Calculamos el día, mes y año gregoriano
+    day = E - int((153 * F + 2) / 5) + 1
+    month = F + 3 - 12 * int(F / 10)
+    year = 100 * B + D - 4800 + int(F / 10)
+
+    return year, month, day
+
+def cargar_scatter_bar_data(path=archivo_nc,
+                     reload=False,readfrom3=False):
+    
+    global datos_nc_scatterbar_cargado
+    group_1 = [str(name) for name, in_group in zip(dic.scatter_bar["data_set_name"], dic.scatter_bar["in_group_1"]) if in_group]
+
+    # Definir las columnas del DataFrame con sus tipos de datos
+    columnas = {
+        "fecha": pd.to_datetime([]),           # Columna de tipo fecha
+        "precipitacion": pd.Series([], dtype='float'),  # Columna de tipo float
+        "prob_deslaves": pd.Series([], dtype='int'),    # Columna de tipo int
+        "categorias": pd.Series([], dtype='str')        # Columna de tipo string
+    }
+
+    data=[]
+    if os.path.exists(path) :
+        for index in range(len(group_1 )): 
+            #print(dic.scatter_bar["data_set_name"][index])
+            ds = xr.open_dataset(os.path.join(path,dic.scatter_bar["data_set_name_file"][index]))
+            T_grid=ds[dic.scatter_bar["data_set_time"][index]].values
+            var=ds[dic.scatter_bar["data_set_var"][index]].values
+
+            for j, date in enumerate(T_grid):
+                if dic.scatter_bar["data_set_type_calendar"][index]=='julian_day':
+                    year, month, day = julian_to_gregorian(int(date))
+                    data_date=pd.to_datetime(f"{2000}-{month:02d}-{day:02d}", format="%Y-%m-%d")
+                elif dic.scatter_bar["data_set_type_calendar"][index]=='days since 1960-01-01':
+                        fecha_hora = datetime.fromisoformat(str(date))
+                        data_date=pd.to_datetime(f"{2000}-{fecha_hora.month:02d}-{fecha_hora.day:02d}", format="%Y-%m-%d")
+
+                data.append({
+                        dic.scatter_bar["scatter_vars"][0]: data_date,
+                        dic.scatter_bar["scatter_vars"][1]: round(var[j],1),
+                        dic.scatter_bar["scatter_vars"][2]: random.randint(0, 100),
+                        dic.scatter_bar["scatter_vars"][3]: dic.scatter_bar["data_set_name"][index]
+                })            
+        datos_nc_scatterbar_cargado=pd.DataFrame(data)
+        return datos_nc_scatterbar_cargado
+    elif readfrom3:
+        if datos_nc_scatterbar_cargado is None:
+            return 'No se encontraron los datos asociados '
+        else:
+            return datos_nc_scatterbar_cargado
+    else:
+        datos_nc_scatterbar_cargado= None
+        return 'No se encontraron los datos asociados '
+    
 
 def cargar_serie_datos_csv(archivo=archivo_csv,
                      reload=False,readfrom3=False):

@@ -12,11 +12,14 @@ from streamlit_option_menu import option_menu
 from dashboards import ST_COMPONENT
 from dashboards.map import ST_MAPS_COMPONENTS
 from dashboards.gauge import ST_GAUGES_COMPONENTS
+from dashboards.series import ST_SERIES_COMPONENTS
+from dashboards.scatter import ST_SCATTERS_COMPONENTS
 import loaddata.dictionary as dic
 from loaddata.files import cargar_serie_datos_csv
 from loaddata.files import cargar_map_datos_csv
 from loaddata.files import cargar_map_datos_layer_csv
 from loaddata.files import cargar_map_datos_layer_nc
+from loaddata.files import cargar_scatter_bar_data
 import os
 import base64
 from pathlib import Path
@@ -99,6 +102,7 @@ def main():
         #df = cargar_serie_datos_csv(readfrom3=True)
         fechas_dias = df[dic.vars["date_proc"][0]].apply(lambda x: datetime.datetime.strptime(x, "%Y-%m-%d").strftime("%Y/%m/%d")).tolist()
         del df
+        cargar_scatter_bar_data(os.path.join('data',place_activo))
         
         #Combo box de opciones de mapas
         selected_map = st.selectbox(
@@ -177,21 +181,21 @@ def main():
     #Siempre cargar la serie primero porque me permite controlar el resto de componentes
     with st.container():
         dasboardC2, url = (
-            ST_COMPONENT['Series: Area & Line']
+            ST_SERIES_COMPONENTS['Series: Area & Line']
         )
         dasboardC2()
 
-    #st.container()
-    #st.markdown(" <br> <br> ", unsafe_allow_html=True)
-    #with st.container():
-    #    dasboardC4, url = (
-    #        ST_SCATTERS_COMPONENTS['Scatters & Bars']
-    #    )
-    #    dasboardC4()
+    st.container()
+    st.markdown(" <br> <br> ", unsafe_allow_html=True)
+    with st.container():
+        dasboardC4, url = (
+            ST_SCATTERS_COMPONENTS['Scatters & Bars']
+        )
+        dasboardC4()
 
     with c1:
         dasboardC1, url = (
-            ST_COMPONENT["Heatmap: Ferrovia"]
+            ST_MAPS_COMPONENTS["Heatmap: Ferrovia"]
         )
         dasboardC1()
 

@@ -1,9 +1,11 @@
 from .map import ST_MAPS_COMPONENTS
 from .gauge import ST_GAUGES_COMPONENTS
 from .series import ST_SERIES_COMPONENTS
+from .scatter import ST_SCATTERS_COMPONENTS
 
 ST_COMPONENT = {
     **ST_MAPS_COMPONENTS,
     **ST_GAUGES_COMPONENTS,
     **ST_SERIES_COMPONENTS,
+    **ST_SCATTERS_COMPONENTS,
 }
