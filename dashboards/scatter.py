@@ -41,7 +41,7 @@ def scatter_bars():
             ),
             color=alt.condition(brush, color, alt.value("lightgray")),
             size=alt.Size(dic.scatter_bar["scatter_vars"][2]+":Q", 
-                          scale=alt.Scale(range=[0, 100]),
+                          scale=alt.Scale(bins=[0.01,40, 60, 90, 100]),
                           title=dic.scatter_bar['group_labels_names'][1].split('\n')
                           ),
         )
