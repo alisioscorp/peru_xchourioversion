@@ -46,8 +46,9 @@ scatter_bar={
             "is_scatter" : [True,True,True,True,True,False,False,False,False], # El label (categoría) se mostrará en el scatter?
                 "is_bar" : [True,True,True,True,True,False,False,False,False], # El label (categoría) se mostrará en la barra?
           "scatter_vars" : ['fecha','precipitacion','% Max deslaves','Años'], #Nombre de variables como se guardan los datos que deben ser leidos por el scatter 
+     "scatter_vars_type" : ['date_var','main_var','second_var','category_var'], # Tipo de variable que definió arriba, solo puede tener los valores 'date_var','mean_var','secon_var' o 'category_var', no puede haber dos variables del mismo tipo
     "group_labels_names" : ['Años','Probabilidad\nMax deslaves'], # Cómo se llamarán los grupos de categorías mostradas en el scatter? el primero es el valor de las categorías (en este caso 'Años' que muestra los valores de precipitación)
-                                                      #  el segundo valor es el grupo de valores >X , <X debajo de 'Años' que en este caso están asociados a los % de deslaves , no está permitido el uso de caracteres de enter       
+                                                                  #  el segundo valor es el grupo de valores >X , <X debajo de 'Años' que en este caso están asociados a los % de deslaves , no está permitido el uso de caracteres de enter       
             "in_group_1" : [True,True,True,True,True,False,False,False,False], # in_group_1 significa que se ploteará esta cetegoría por defecto
         "scatter_y_title": "Precipitación", # Título Y del Scatter
         "scatter_y_units": "mm", # Unidades Y del Scatter

@@ -16,11 +16,16 @@ def scatter_bars():
     group_1 = [str(name) for name, in_group in zip(dic.scatter_bar["data_set_name"], dic.scatter_bar["in_group_1"]) if in_group]
     color_group_1 = [str(name) for name, in_group in zip(dic.scatter_bar["data_set_color"], dic.scatter_bar["in_group_1"]) if in_group]
 
+    date_var=dic.scatter_bar["scatter_vars"][dic.scatter_bar["scatter_vars_type"].index("date_var")]
+    main_var=dic.scatter_bar["scatter_vars"][dic.scatter_bar["scatter_vars_type"].index("main_var")]
+    second_var=dic.scatter_bar["scatter_vars"][dic.scatter_bar["scatter_vars_type"].index("second_var")]
+    category_var=dic.scatter_bar["scatter_vars"][dic.scatter_bar["scatter_vars_type"].index("category_var")]
+
     scale = alt.Scale(
         domain=group_1,
         range=color_group_1,
     )
-    color = alt.Color(dic.scatter_bar["scatter_vars"][3]+":N", scale=scale)
+    color = alt.Color(category_var+":N", scale=scale)
 
     # We create two selections:
     # - a brush that is active on the top panel
@@ -33,14 +38,14 @@ def scatter_bars():
         alt.Chart()
         .mark_point()
         .encode(
-            alt.X("monthdate(fecha):T", title="Date"),
+            alt.X("monthdate("+date_var+"):T", title="Date"),
             alt.Y(
-                dic.scatter_bar["scatter_vars"][1]+":Q",
+                main_var+":Q",
                 title=f"{dic.scatter_bar['scatter_y_title']} ({dic.scatter_bar['scatter_y_units']})",
                 scale=alt.Scale(domain=dic.scatter_bar['scatter_y_range']),
             ),
             color=alt.condition(brush, color, alt.value("lightgray")),
-            size=alt.Size(dic.scatter_bar["scatter_vars"][2]+":Q", 
+            size=alt.Size(second_var+":Q", 
                           scale=alt.Scale(bins=[0.01,40, 60, 90, 100]),
                           title=dic.scatter_bar['group_labels_names'][1].split('\n')
                           ),
@@ -55,8 +60,8 @@ def scatter_bars():
         alt.Chart()
         .mark_bar()
         .encode(
-            alt.X("sum("+dic.scatter_bar["scatter_vars"][1]+")", title=f"{dic.scatter_bar['bar_x_title']} ({dic.scatter_bar['bar_x_units']})"),
-            alt.Y(dic.scatter_bar["scatter_vars"][3]+":N"),
+            alt.X("sum("+main_var+")", title=f"{dic.scatter_bar['bar_x_title']} ({dic.scatter_bar['bar_x_units']})"),
+            alt.Y(category_var+":N"),
             color=alt.condition(click, color, alt.value("lightgray")),
         )
         .transform_filter(brush)

@@ -9,6 +9,7 @@ import streamlit as st
 import xarray as xr
 import random
 from datetime import datetime
+import sys
 
 datos_csv_map_cargado = None
 datos_csv_serie_cargado = None
@@ -17,6 +18,33 @@ datos_nc_map_heat_cargado = None
 datos_nc_scatterbar_cargado = None
 archivo_csv = "data/pepe.csv"
 archivo_nc = "data/pepe.nc"
+
+def validate_scatter_vars_type(scatter_bar):
+    # Valores permitidos
+    valid_values = {'date_var', 'main_var', 'second_var', 'category_var'}
+    # Extraer la lista de scatter_vars_type del diccionario
+    scatter_vars_type = scatter_bar.get('scatter_vars_type', [])
+    # Comprobar que todos los valores son válidos
+    for value in scatter_vars_type:
+        if value not in valid_values:
+            print(f"\033[91m Valor no permitido encontrado en scatter_bar:scatter_vars_type -> {value} \033[0m")
+            return False
+    # Comprobar que no hay valores duplicados y obtener el duplicado
+    seen = set()
+    for value in scatter_vars_type:
+        if value in seen:
+            print(f"\033[91m Valor duplicado encontrado en scatter_bar:scatter_vars_type -> {value} \033[0m")
+            return False
+        seen.add(value)
+    
+    #print("Validación exitosa")
+    return True
+
+is_valid = validate_scatter_vars_type(dic.scatter_bar)
+if not is_valid:
+    st.stop()
+    sys.exit()
+    
 
 def julian_to_gregorian(jd):
     # Calculamos los valores A, B y C según la fórmula de conversión
@@ -43,12 +71,10 @@ def cargar_scatter_bar_data(path=archivo_nc,
     group_1 = [str(name) for name, in_group in zip(dic.scatter_bar["data_set_name"], dic.scatter_bar["in_group_1"]) if in_group]
 
     # Definir las columnas del DataFrame con sus tipos de datos
-    columnas = {
-        "fecha": pd.to_datetime([]),           # Columna de tipo fecha
-        "precipitacion": pd.Series([], dtype='float'),  # Columna de tipo float
-        "prob_deslaves": pd.Series([], dtype='int'),    # Columna de tipo int
-        "categorias": pd.Series([], dtype='str')        # Columna de tipo string
-    }
+    date_var=dic.scatter_bar["scatter_vars"][dic.scatter_bar["scatter_vars_type"].index("date_var")]
+    main_var=dic.scatter_bar["scatter_vars"][dic.scatter_bar["scatter_vars_type"].index("main_var")]
+    second_var=dic.scatter_bar["scatter_vars"][dic.scatter_bar["scatter_vars_type"].index("second_var")]
+    category_var=dic.scatter_bar["scatter_vars"][dic.scatter_bar["scatter_vars_type"].index("category_var")]
 
     data=[]
     if os.path.exists(path) :
@@ -65,12 +91,13 @@ def cargar_scatter_bar_data(path=archivo_nc,
                 elif dic.scatter_bar["data_set_type_calendar"][index]=='days since 1960-01-01':
                         fecha_hora = datetime.fromisoformat(str(date))
                         data_date=pd.to_datetime(f"{2000}-{fecha_hora.month:02d}-{fecha_hora.day:02d}", format="%Y-%m-%d")
-
+                
+                #print( )
                 data.append({
-                        dic.scatter_bar["scatter_vars"][0]: data_date,
-                        dic.scatter_bar["scatter_vars"][1]: round(var[j],1),
-                        dic.scatter_bar["scatter_vars"][2]: random.randint(0, 100),
-                        dic.scatter_bar["scatter_vars"][3]: dic.scatter_bar["data_set_name"][index]
+                        date_var: data_date,
+                        main_var: round(var[j],1),
+                        second_var: random.randint(0, 100),
+                        category_var: dic.scatter_bar["data_set_name"][index]
                 })            
         datos_nc_scatterbar_cargado=pd.DataFrame(data)
         return datos_nc_scatterbar_cargado

@@ -3,7 +3,6 @@ import xarray as xr
 import numpy as np
 import loaddata.dictionary as dic
 import os
-import sys
 import pandas as pd
 import sys
 import shutil
