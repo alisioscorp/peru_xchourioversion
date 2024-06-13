@@ -23,12 +23,12 @@ from loaddata.files import cargar_scatter_bar_data
 import os
 import base64
 from pathlib import Path
-import locale
+#import locale
 
-locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
+#locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
 import datetime
 
-
+check_today=False
 
 def img_to_bytes(img_path):
     img_bytes = Path(img_path).read_bytes()
@@ -116,7 +116,7 @@ def main():
             # Verificación de que "hoy" esté como dato en la serie
             #   Si "Hoy" no está en mi serie de datos uso por defecto el primer día 
             #     en la serie, que normalmente es el día en que se produjo la serie
-            if not datetime.date.today().strftime('%Y%m%d') in fechas_dias:
+            if check_today and not datetime.date.today().strftime('%Y%m%d') in fechas_dias:
                 date=st.date_input('',
                       format="YYYY/MM/DD",
                       value=datetime.datetime.strptime(fechas_dias[0], "%Y/%m/%d"),
@@ -128,6 +128,7 @@ def main():
             else:
                 date=st.date_input('',
                       format="YYYY/MM/DD",
+                      value=datetime.datetime.strptime(fechas_dias[-1],"%Y/%m/%d"),
                       min_value=datetime.datetime.strptime(fechas_dias[0], "%Y/%m/%d"), 
                       max_value=datetime.datetime.strptime(fechas_dias[-1],"%Y/%m/%d"),
                       )
