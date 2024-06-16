@@ -81,8 +81,11 @@ def cargar_scatter_bar_data(path=archivo_nc,
         for index in range(len(group_1 )): 
             #print(dic.scatter_bar["data_set_name"][index])
             ds = xr.open_dataset(os.path.join(path,dic.scatter_bar["data_set_name_file"][index]))
+            des_index=dic.scatter_bar["data_set_name_file"].index( dic.scatter_bar["data_set_name_file"][index].replace(".nc", "_deslave.nc") )
+            ds_des = xr.open_dataset(os.path.join(path,dic.scatter_bar["data_set_name_file"][des_index]))
             T_grid=ds[dic.scatter_bar["data_set_time"][index]].values
             var=ds[dic.scatter_bar["data_set_var"][index]].values
+            var1=ds_des[dic.scatter_bar["data_set_var"][des_index]].values
 
             for j, date in enumerate(T_grid):
                 if dic.scatter_bar["data_set_type_calendar"][index]=='julian_day':
@@ -96,7 +99,7 @@ def cargar_scatter_bar_data(path=archivo_nc,
                 data.append({
                         date_var: data_date,
                         main_var: round(var[j],1),
-                        second_var: random.randint(0, 100),
+                        second_var: round(var1[j],1) + random.randint(0, 50),
                         category_var: dic.scatter_bar["data_set_name"][index]
                 })            
         datos_nc_scatterbar_cargado=pd.DataFrame(data)

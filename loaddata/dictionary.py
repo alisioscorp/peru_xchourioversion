@@ -37,19 +37,19 @@ scatter_bar={
          "data_set_name" : [str(datetime.now().strftime('%Y')),'2020','2017','2016','Normal','<40%','40-59%','60-89%','>90%'], #Nombre las categorias de los datos a mostrar (En este caso la sección 'Años' en el scatter) 
                                                                                                                                # Deben existir todos los labels correspondientes a cada archivo no importa si no los va a plotear 
                                                                                                                                # por defecto, los labels que se plotean por defecto se asignan al grupo_1 (explicado más abajo)
-    "data_set_name_file" : [str(datetime.now().strftime('%Y'))+'.nc','2020.nc','2017.nc','2016.nc','Normal.nc','<40%.nc','40-59%.nc','60-89%.nc','>90%.nc'], # Nombre de los archivos (deben ser formato .nc)
-          "data_set_var" : ['prcp','prcp','prcp','prcp','prcpSmooth','prcp','prcp','prcp','prcp'], #Nombre de la variable que contien los datos en cada archivo
+    "data_set_name_file" : [str(datetime.now().strftime('%Y'))+'.nc','2020.nc','2017.nc','2016.nc','Normal.nc',str(datetime.now().strftime('%Y'))+'_deslave.nc','2020_deslave.nc','2017_deslave.nc','2016_deslave.nc','Normal_deslave.nc'], # Nombre de los archivos (deben ser formato .nc)
+          "data_set_var" : ['prcp','prcp','prcp','prcp','prcpSmooth','prcp','prcp','prcp','prcp','prcpSmooth'], #Nombre de la variable que contien los datos en cada archivo
          "data_set_time" : ['T','T','T','T','T','T','T','T','T'], #Nombre del grid de Tiempo (fechas) en cada archivo 
-"data_set_type_calendar" : ['julian_day','julian_day','julian_day','julian_day','days since 1960-01-01','julian_day','julian_day','julian_day','julian_day'], # Formato de fecha en el grid T (solo permitido julian_day y days since 1960-01-01)
+"data_set_type_calendar" : ['julian_day','julian_day','julian_day','julian_day','days since 1960-01-01','julian_day','julian_day','julian_day','julian_day','days since 1960-01-01'], # Formato de fecha en el grid T (solo permitido julian_day y days since 1960-01-01)
         "data_set_color" : ["#e7ba52", "#a7a7a7", "#aec7e8", "#1f77b4","#9467BD","#E500B7","#E500B7","#E500B7","#E500B7"], #Colores con que se plotearan los datos (aunque no todos los labels estén asociados al grupo_1 -ploteo por defecto-, 
                                                                                                                            # debe agregar la misma cantidad de colores que cantidad de labels definidos arriba)
-            "is_scatter" : [True,True,True,True,True,False,False,False,False], # El label (categoría) se mostrará en el scatter?
-                "is_bar" : [True,True,True,True,True,False,False,False,False], # El label (categoría) se mostrará en la barra?
+            "is_scatter" : [True,True,True,True,True,False,False,False,False,False], # El label (categoría) se mostrará en el scatter?
+                "is_bar" : [True,True,True,True,True,False,False,False,False,False], # El label (categoría) se mostrará en la barra?
           "scatter_vars" : ['fecha','precipitacion','% Max deslaves','Años'], #Nombre de variables como se guardan los datos que deben ser leidos por el scatter 
      "scatter_vars_type" : ['date_var','main_var','second_var','category_var'], # Tipo de variable que definió arriba, solo puede tener los valores 'date_var','mean_var','secon_var' o 'category_var', no puede haber dos variables del mismo tipo
     "group_labels_names" : ['Años','Probabilidad\nMax deslaves'], # Cómo se llamarán los grupos de categorías mostradas en el scatter? el primero es el valor de las categorías (en este caso 'Años' que muestra los valores de precipitación)
                                                                   #  el segundo valor es el grupo de valores >X , <X debajo de 'Años' que en este caso están asociados a los % de deslaves , no está permitido el uso de caracteres de enter       
-            "in_group_1" : [True,True,True,True,True,False,False,False,False], # in_group_1 significa que se ploteará esta cetegoría por defecto
+            "in_group_1" : [True,True,True,True,True,False,False,False,False,False], # in_group_1 significa que se ploteará esta cetegoría por defecto
         "scatter_y_title": "Precipitación", # Título Y del Scatter
         "scatter_y_units": "mm", # Unidades Y del Scatter
         "scatter_y_range":[0,50],# Rango de valores en eje Y
