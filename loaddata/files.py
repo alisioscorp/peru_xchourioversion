@@ -99,7 +99,7 @@ def cargar_scatter_bar_data(path=archivo_nc,
                 data.append({
                         date_var: data_date,
                         main_var: round(var[j],1),
-                        second_var: round(var1[j],1) + random.randint(0, 50),
+                        second_var: round(var1[j],1),
                         category_var: dic.scatter_bar["data_set_name"][index]
                 })            
         datos_nc_scatterbar_cargado=pd.DataFrame(data)
